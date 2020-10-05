@@ -1,15 +1,26 @@
-language: android
+# ignored on non-linux platforms, but bionic is required for nested virtualization
+dist: bionic
+sudo: true
 branches:
     only:
         - master
-android:
-    licenses:
-        - 'android-sdk-license-.+'
 cache:
     directories:
-        # Android SDK
-        - $HOME/android-cmdline-tools
+        # Check if this actually helps
+        - $HOME/android-sdk/tools
         - $HOME/android-sdk
+env:
+    global:
+        - COMPILE_API=30
+        - ANDROID_BUILD_TOOLS=30.0.2
+        - ABI=x86_64
+        - ADB_INSTALL_TIMEOUT=8
+        - ANDROID_HOME=${HOME}/android-sdk
+        - ANDROID_TOOLS_URL="https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip"
+        - EMU_FLAVOR=google_apis # use google_apis flavor if no default flavor emulator
+        - TOOLS=${ANDROID_HOME}/tools
+        # PATH order is incredibly important. e.g. the 'emulator' script exists in more than one place!
+        - PATH=${ANDROID_HOME}:${ANDROID_HOME}/emulator:${TOOLS}:${TOOLS}/bin:${ANDROID_HOME}/platform-tools:${PATH}
 jobs:
     fast_finish: true
     include:
@@ -17,19 +28,28 @@ jobs:
           # manually install the android-28
         before_install:
             - touch $HOME/.android/repositories.cfg
-            - yes | sdkmanager tools
-            # Install the system image.
-            - yes | sdkmanager "system-images;android-30;google_apis;x86_64"
-            - echo no | avdmanager -s create avd -n TEST_DEVICE -k 'system-images;android-30;google_apis;x86_64' -c 100M
+            - yes | sdkmanager --licenses >/dev/null
+            - echo y | sdkmanager --no_https "platform-tools" >/dev/null
+            - echo y | sdkmanager --no_https "tools" >/dev/null
+            - echo y | sdkmanager --no_https "build-tools;${ANDROID_BUILD_TOOLS}" >/dev/null
+            - echo y | sdkmanager --no_https "platforms;android-${COMPILE_API}" >/dev/null
+            - echo y | sdkmanager --no_https "emulator" >/dev/null
             - echo 'Finished installing packages'
-        before_cache:
-            - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-            - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-        before_script:
-            - emulator -avd TEST_DEVICE -no-audio -no-window -show-kernel -verbose &
+        install:
+            - echo y | sdkmanager --no_https "system-images;android-$COMPILE_API;$EMU_FLAVOR;$ABI" >/dev/null # install our emulator
+            # Set up KVM on linux for hardware acceleration. Manually here so it only happens for emulator tests, takes ~30s
+            - sudo -E apt-get -yq --no-install-suggests --no-install-recommends install bridge-utils libpulse0 libvirt-bin qemu-kvm virtinst ubuntu-vm-builder
+            - sudo adduser $USER libvirt
+            - sudo adduser $USER kvm
+
+            - echo no | avdmanager create avd --force TEST_DEVICE -k "system-images;android-$COMPILE_API;$EMU_FLAVOR;$ABI" -c 100M # create device
+            - |
+                EMU_PARAMS="-verbose -no-snapshot -no-window -camera-back none -camera-front none -selinux permissive -qemu -m 2048 -show-kernel -verbose"
+                EMU_COMMAND="emulator"
+                sudo -E sudo -u $USER -E bash -c "${ANDROID_HOME}/emulator/${EMU_COMMAND} -avd TEST_DEVICE ${EMU_PARAMS} &"
             - echo 'Emu created'
             - android-wait-for-emulator
-            - adb shell input keyevent 82 &
-            - adb -s TEST_DEVICE install apkname.apk
+                - adb shell input keyevent 82 &
+                - adb -s TEST_DEVICE install apkname.apk
         script:
             - echo 'Done'
