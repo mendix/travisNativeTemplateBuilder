@@ -24,9 +24,9 @@ jobs:
           # manually install the android-28
         before_install:
             - touch $HOME/.android/repositories.cfg
-            - yes | sdkmanager "platforms"
+            - yes | sdkmanager "platforms;android-28"
             - yes | sdkmanager "build-tools;28.0.3"
-            - yes | sdkmanager "system-images;android-28;google_apis;x86"
+#            - yes | sdkmanager "system-images;android-28;google_apis;x86"
         before_cache:
             - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
             - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
