@@ -8,7 +8,7 @@ android:
     components:
         - tools
         # TODO: check if we need this
-        - platform-tools
+        - platform-tools-28.0.2
         - build-tools-28.0.3
         - sys-img-x86-android-28
 stages:
@@ -27,7 +27,7 @@ jobs:
           #        - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
           #        - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
           before_script:
-              - echo no | android create avd --force -n TEST_DEVICE -t android-28 --abi armeabi-v7a -c 100M
+              - echo no | android create avd --force -n TEST_DEVICE -t android-28 --abi x86 -c 100M
               # - echo no | avdmanager -s create avd -n TEST_DEVICE -k 'system-images;android-28;google_apis;x86' -c 100M
               - emulator -avd test -no-audio -no-window &
               - android-wait-for-emulator
