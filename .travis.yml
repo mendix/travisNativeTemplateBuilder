@@ -14,8 +14,8 @@ jobs:
             - touch $HOME/.android/repositories.cfg
             - yes | sdkmanager tools
             # Install the system image.
-            - yes | sdkmanager "system-images;android-28;google_apis;x86"
-            - echo no | avdmanager -s create avd -n TEST_DEVICE -k 'system-images;android-28;google_apis;x86' -c 100M
+            - yes | sdkmanager "system-images;android-30;google_apis;x86"
+            - echo no | avdmanager -s create avd -n TEST_DEVICE -k 'system-images;android-30;google_apis;x86' -c 100M
         before_cache:
             - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
             - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
