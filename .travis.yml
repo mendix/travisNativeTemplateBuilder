@@ -1,6 +1,7 @@
 # ignored on non-linux platforms, but bionic is required for nested virtualization
 dist: bionic
 sudo: true
+language: node
 branches:
     only:
         - master
