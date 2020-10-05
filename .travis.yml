@@ -4,11 +4,6 @@ sudo: true
 branches:
     only:
         - master
-cache:
-    directories:
-        # Check if this actually helps
-        - $HOME/android-sdk/tools
-        - $HOME/android-sdk
 env:
     global:
         - COMPILE_API=30
