@@ -5,6 +5,11 @@ branches:
 android:
     licenses:
         - 'android-sdk-license-.+'
+cache:
+    directories:
+        # Android SDK
+        - $HOME/android-cmdline-tools
+        - $HOME/android-sdk
 jobs:
     fast_finish: true
     include:
@@ -14,8 +19,8 @@ jobs:
             - touch $HOME/.android/repositories.cfg
             - yes | sdkmanager tools
             # Install the system image.
-            - yes | sdkmanager "system-images;android-30;google_apis;x86"
-            - echo no | avdmanager -s create avd -n TEST_DEVICE -k 'system-images;android-30;google_apis;x86' -c 100M
+            - yes | sdkmanager "system-images;android-30;google_apis;x86_64"
+            - echo no | avdmanager -s create avd -n TEST_DEVICE -k 'system-images;android-30;google_apis;x86_64' -c 100M
             - echo 'Finished installing packages'
         before_cache:
             - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
