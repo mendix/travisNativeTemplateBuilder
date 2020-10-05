@@ -1,14 +1,13 @@
 # ignored on non-linux platforms, but bionic is required for nested virtualization
 dist: bionic
-sudo: true
 language: node
 branches:
     only:
         - master
 env:
     global:
-        - COMPILE_API=30
-        - ANDROID_BUILD_TOOLS=30.0.2
+        - COMPILE_API=29
+        - ANDROID_BUILD_TOOLS=29.0.2
         - ABI=x86_64
         - ADB_INSTALL_TIMEOUT=8
         - ANDROID_HOME=${HOME}/android-sdk
