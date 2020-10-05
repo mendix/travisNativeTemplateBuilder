@@ -17,13 +17,10 @@ android:
         - 'android-sdk-preview-license-52d11cd2'
         - 'android-sdk-license-.+'
         - 'google-gdk-license-.+'
-stages:
-    - name: test
-      if: tag IS blank
 jobs:
     fast_finish: true
     include:
-        - name: "Run android"
+        name: "Run android"
           # manually install the android-28
         before_install:
             - touch $HOME/.android/repositories.cfg
