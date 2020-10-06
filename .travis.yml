@@ -1,6 +1,6 @@
 # ignored on non-linux platforms, but bionic is required for nested virtualization
 dist: bionic
-language: java
+language: android
 branches:
     only:
         - master
@@ -47,7 +47,7 @@ jobs:
 
             - echo no | avdmanager create avd --force -n TEST_DEVICE -k "system-images;android-$COMPILE_API;$EMU_FLAVOR;$ABI" -c 100M # create device
             - |
-                EMU_PARAMS="-verbose -no-snapshot -no-window -camera-back none -camera-front none -selinux permissive -qemu -m 2048 -show-kernel"
+                EMU_PARAMS="-verbose -no-snapshot -no-window -camera-back none -camera-front none -selinux permissive -qemu -m 2048"
                 EMU_COMMAND="emulator"
                 sudo -E sudo -u $USER -E bash -c "${ANDROID_HOME}/emulator/${EMU_COMMAND} -avd TEST_DEVICE ${EMU_PARAMS} &"
             - echo 'Emu created'
