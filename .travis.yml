@@ -17,7 +17,9 @@ env:
         - ANDROID_SDK_ROOT=${ANDROID_HOME}
         - ANDROID_TOOLS_URL="https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip"
         # PATH order is incredibly important. e.g. the 'emulator' script exists in more than one place!
-        - PATH=${ANDROID_HOME}:${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:${PATH}
+        - TOOLS=${ANDROID_HOME}/tools
+        # PATH order is incredibly important. e.g. the 'emulator' script exists in more than one place!
+        - PATH=${ANDROID_HOME}:${ANDROID_HOME}/emulator:${TOOLS}:${TOOLS}/bin:${ANDROID_HOME}/platform-tools:${PATH}
 jobs:
     fast_finish: true
     include:
