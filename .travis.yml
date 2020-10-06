@@ -24,7 +24,9 @@ jobs:
         before_install:
             # Set up JDK 8 for Android SDK - Java is universally needed: codacy, unit tests, emulators
             - ./install-emulator.sh
-        script:
+        install:
             - ./create-emulator.sh
             - ./android-wait-for-emulator.sh
             - adb shell input keyevent 82 & # unlocking the device
+        script:
+            - echo Done
