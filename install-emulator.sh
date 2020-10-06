@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 
 wget -q "$ANDROID_TOOLS_URL" -O android-sdk-tools.zip
 unzip -q android-sdk-tools.zip -d "$ANDROID_HOME"
@@ -15,5 +15,5 @@ echo y | sdkmanager --no_https "platforms;android-${COMPILE_API}" >/dev/null # a
 echo y | sdkmanager --no_https "emulator" >/dev/null # duh
 echo y | sdkmanager --no_https "system-images;android-${COMPILE_API};google_apis;x86_64" # install our emulator
 
-echo 'Finished installing packages'
+echo Finished installing packages
 
