@@ -30,7 +30,7 @@ jobs:
             - sudo adduser $USER libvirt
             - sudo adduser $USER kvm
             - echo no | avdmanager create avd --force -n TEST_DEVICE -k "system-images;android-${COMPILE_API};google_apis;x86_64" -c 100M # create device
-            - sudo -E sudo -u "$USER" -E bash -c "emulator -avd TEST_DEVICE -verbose -no-snapshot -no-window -camera-back none -camera-front none -selinux permissive -qemu -m 2048 &"
+            - sudo -E sudo -u "$USER" -E bash -c "${ANDROID_HOME}/emulator/emulator -avd TEST_DEVICE -verbose -no-snapshot -no-window -camera-back none -camera-front none -selinux permissive -qemu -m 2048 &"
             - echo 'Emu created'
             - ./android-wait-for-emulator.sh
             - adb shell input keyevent 82 & # unlocking the device
