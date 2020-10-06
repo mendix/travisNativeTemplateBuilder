@@ -1,6 +1,6 @@
 # ignored on non-linux platforms, but bionic is required for nested virtualization
 dist: bionic
-language: android
+language: java
 branches:
     only:
         - master
@@ -51,7 +51,8 @@ jobs:
                 EMU_COMMAND="emulator"
                 sudo -E sudo -u $USER -E bash -c "${ANDROID_HOME}/emulator/${EMU_COMMAND} -avd TEST_DEVICE ${EMU_PARAMS} &"
             - echo 'Emu created'
-            - android-wait-for-emulator
+            - chmod +x ./android-wait-for-emulator.sh
+            - ./android-wait-for-emulator.sh
             - adb shell input keyevent 82 &
             - adb -s TEST_DEVICE install apkname.apk
         script:
