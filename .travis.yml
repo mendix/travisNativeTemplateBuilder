@@ -25,7 +25,7 @@ jobs:
             # Set up JDK 8 for Android SDK - Java is universally needed: codacy, unit tests, emulators
             - ./install-emulator.sh
         script:
-            - set -ex
+            - set -e
           # Set up KVM on linux for hardware acceleration. Manually here so it only happens for emulator tests, takes ~30s
             - sudo -E apt-get -yq --no-install-suggests --no-install-recommends install bridge-utils libpulse0 libvirt-bin qemu-kvm virtinst ubuntu-vm-builder >/dev/null
             - sudo adduser $USER libvirt
