@@ -3,7 +3,8 @@ set -ex
 
 # Set up KVM on linux for hardware acceleration. Manually here so it only happens for emulator tests, takes ~30s
 #sudo -E apt-get -yq --no-install-suggests --no-install-recommends install bridge-utils libpulse0 libvirt-bin qemu-kvm virtinst ubuntu-vm-builder >/dev/null
-sudo apt-get install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils >/dev/null
+sudo apt-get install qemu-kvm libvirt-daemon-system libvirt-clients >/dev/null
+sudo apt-get install bridge-utils
 sudo adduser "$USER" libvirt
 sudo adduser "$USER" kvm
 
