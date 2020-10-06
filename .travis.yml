@@ -13,6 +13,8 @@ env:
         - ANDROID_HOME=${HOME}/android-sdk
         - ANDROID_TOOLS_URL="https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip"
         - EMU_FLAVOR=google_apis # use google_apis flavor if no default flavor emulator
+        - GRAVIS="https://raw.githubusercontent.com/DanySK/Gravis-CI/master/"
+        - JDK="1.8"
         - TOOLS=${ANDROID_HOME}/tools
         # PATH order is incredibly important. e.g. the 'emulator' script exists in more than one place!
         - PATH=${ANDROID_HOME}:${ANDROID_HOME}/emulator:${TOOLS}:${TOOLS}/bin:${ANDROID_HOME}/platform-tools:${PATH}
@@ -22,6 +24,11 @@ jobs:
         name: "Run android"
           # manually install the android-28
         before_install:
+            # Set up JDK 8 for Android SDK - Java is universally needed: codacy, unit tests, emulators
+            - curl "${GRAVIS}.install-jdk-travis.sh" --output ~/.install-jdk-travis.sh
+            - export TARGET_JDK="${JDK}"
+            - JDK="1.8"
+            - source ~/.install-jdk-travis.sh
             - wget -q "${ANDROID_TOOLS_URL}" -O android-sdk-tools.zip
             - unzip -q android-sdk-tools.zip -d ${ANDROID_HOME}
             - rm android-sdk-tools.zip
@@ -43,7 +50,7 @@ jobs:
 
             - echo no | avdmanager create avd --force TEST_DEVICE -k "system-images;android-$COMPILE_API;$EMU_FLAVOR;$ABI" -c 100M # create device
             - |
-                EMU_PARAMS="-verbose -no-snapshot -no-window -camera-back none -camera-front none -selinux permissive -qemu -m 2048 -show-kernel -verbose"
+                EMU_PARAMS="-verbose -no-snapshot -no-window -camera-back none -camera-front none -selinux permissive -qemu -m 2048 -show-kernel"
                 EMU_COMMAND="emulator"
                 sudo -E sudo -u $USER -E bash -c "${ANDROID_HOME}/emulator/${EMU_COMMAND} -avd TEST_DEVICE ${EMU_PARAMS} &"
             - echo 'Emu created'
