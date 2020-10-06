@@ -1,6 +1,5 @@
 # ignored on non-linux platforms, but bionic is required for nested virtualization
 dist: bionic
-language: node
 branches:
     only:
         - master
@@ -32,12 +31,13 @@ jobs:
             - rm android-sdk-tools.zip
             - mkdir $HOME/.android
             - touch $HOME/.android/repositories.cfg
-            - yes | sdkmanager --licenses >/dev/null
-            - echo y | sdkmanager --no_https "platform-tools" >/dev/null
-            - echo y | sdkmanager --no_https "tools" >/dev/null
-            - echo y | sdkmanager --no_https "build-tools;${ANDROID_BUILD_TOOLS}" >/dev/null
-            - echo y | sdkmanager --no_https "platforms;android-${COMPILE_API}" >/dev/null
-            - echo y | sdkmanager --no_https "emulator" >/dev/null
+            - java -version
+            - echo y | sdkmanager --licenses
+            - echo y | sdkmanager --no_https "platform-tools"
+            - echo y | sdkmanager --no_https "tools"
+            - echo y | sdkmanager --no_https "build-tools;${ANDROID_BUILD_TOOLS}"
+            - echo y | sdkmanager --no_https "platforms;android-${COMPILE_API}"
+            - echo y | sdkmanager --no_https "emulator"
             - echo 'Finished installing packages'
         install:
             - echo y | sdkmanager --no_https "system-images;android-$COMPILE_API;$EMU_FLAVOR;$ABI" >/dev/null # install our emulator
