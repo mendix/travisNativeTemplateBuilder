@@ -4,6 +4,9 @@ language: java
 branches:
     only:
         - master
+cache:
+    directories:
+        - ${HOME}/android-sdk
 jdk:
     - openjdk8
 env:
