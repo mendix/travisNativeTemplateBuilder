@@ -57,6 +57,6 @@ jobs:
             - chmod +x ./android-wait-for-emulator.sh
             - ./android-wait-for-emulator.sh
             - adb shell input keyevent 82 & # unlocking the device
-            - adb -s TEST_DEVICE install app-appstore-debug.apk
+            - adb -s  @TEST_DEVICE install app-appstore-debug.apk
         script:
             - echo 'Done'
