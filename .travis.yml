@@ -18,7 +18,6 @@ env:
         - ANDROID_HOME=${HOME}/android-sdk
         - ANDROID_TOOLS_URL="https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip"
         - EMU_FLAVOR=google_apis # use google_apis flavor if no default flavor emulator
-        - GRAVIS="https://raw.githubusercontent.com/DanySK/Gravis-CI/master/"
         - TOOLS=${ANDROID_HOME}/tools
         # PATH order is incredibly important. e.g. the 'emulator' script exists in more than one place!
         - PATH=${ANDROID_HOME}:${ANDROID_HOME}/emulator:${TOOLS}:${TOOLS}/bin:${ANDROID_HOME}/platform-tools:${PATH}
@@ -29,12 +28,9 @@ jobs:
           # manually install the android-28
         before_install:
             # Set up JDK 8 for Android SDK - Java is universally needed: codacy, unit tests, emulators
-            - chmod +x ./install-emulator.sh
             - ./install-emulator.sh
         install:
-            - chmod +x ./creat-emulator.sh
-            - ./creat-emulator.sh
-            - chmod +x ./android-wait-for-emulator.sh
+            - ./create-emulator.sh
             - ./android-wait-for-emulator.sh
             - adb shell input keyevent 82 & # unlocking the device
             - adb -s @TEST_DEVICE install app-appstore-debug.apk

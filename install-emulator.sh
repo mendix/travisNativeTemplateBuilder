@@ -17,7 +17,7 @@ if [ -d "${ANDROID_HOME}/tools" ]; then
 fi
 
 if [ -d "${ANDROID_HOME}/build-tools/${ANDROID_BUILD_TOOLS}" ]; then
-  echo y | sdkmanager --no_https "build-tools;${ANDROID_BUILD_TOOLS}" >/dev/null # apk signed is needed
+  echo y | sdkmanager --no_https "build-tools;${ANDROID_BUILD_TOOLS}" >/dev/null # apksigner is needed
 fi
 
 if [ -d "${ANDROID_HOME}/platforms/android-${COMPILE_API}" ]; then
