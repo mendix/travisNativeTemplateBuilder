@@ -4,6 +4,8 @@ language: node
 branches:
     only:
         - master
+jdk:
+    - openjdk8
 env:
     global:
         - COMPILE_API=29
@@ -25,10 +27,6 @@ jobs:
           # manually install the android-28
         before_install:
             # Set up JDK 8 for Android SDK - Java is universally needed: codacy, unit tests, emulators
-            - curl "${GRAVIS}.install-jdk-travis.sh" --output ~/.install-jdk-travis.sh
-            - export TARGET_JDK="${JDK}"
-            - JDK="1.8"
-            - source ~/.install-jdk-travis.sh
             - wget -q "${ANDROID_TOOLS_URL}" -O android-sdk-tools.zip
             - unzip -q android-sdk-tools.zip -d ${ANDROID_HOME}
             - rm android-sdk-tools.zip
