@@ -21,7 +21,7 @@ jobs:
     fast_finish: true
     include:
         name: "Run android"
-        install:
+        before_install:
             # Set up JDK 8 for Android SDK - Java is universally needed: codacy, unit tests, emulators
             - ./install-emulator.sh
         script:
