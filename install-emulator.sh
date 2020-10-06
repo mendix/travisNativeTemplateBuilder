@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -e
 
 wget -q "$ANDROID_TOOLS_URL" -O android-sdk-tools.zip
 unzip -q android-sdk-tools.zip -d "$ANDROID_HOME"
@@ -12,8 +12,8 @@ echo y | sdkmanager --no_https "platform-tools" >/dev/null # adb logcat fastboot
 echo y | sdkmanager --no_https "tools" >/dev/null #  avdmanager, sdkmanager
 echo y | sdkmanager --no_https "build-tools;${ANDROID_BUILD_TOOLS}" >/dev/null # apksigner is needed
 echo y | sdkmanager --no_https "platforms;android-${COMPILE_API}" >/dev/null # actual image
-
-
 echo y | sdkmanager --no_https "emulator" >/dev/null # duh
+echo y | sdkmanager --no_https "system-images;android-${COMPILE_API};google_apis;x86_64" # install our emulator
+
 echo 'Finished installing packages'
 
