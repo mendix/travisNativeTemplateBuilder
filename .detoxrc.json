@@ -1,0 +1,14 @@
+{
+  "testRunner": "jest",
+  "runnerConfig": "e2e/config.json",
+  "configurations": {
+    "android": {
+      "type": "android.emulator",
+      "binaryPath": "/Users/Mehmet.Izci/Projects/travisAndroid/app-appstore-debug.apk",
+      "testBinaryPath": "/Users/Mehmet.Izci/Projects/travisAndroid/app-appstore-debug-androidTest.apk",
+      "device": {
+        "avdName": "Pixel_2_API_29"
+      }
+    }
+  }
+}
