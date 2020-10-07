@@ -4,8 +4,8 @@
   "configurations": {
     "android": {
       "type": "android.emulator",
-      "binaryPath": "/Users/Mehmet.Izci/Projects/travisAndroid/app-appstore-debug.apk",
-      "testBinaryPath": "/Users/Mehmet.Izci/Projects/travisAndroid/app-appstore-debug-androidTest.apk",
+      "binaryPath": "./app-appstore-debug.apk",
+      "testBinaryPath": "./app-appstore-debug-androidTest.apk",
       "device": {
         "avdName": "Pixel_2_API_29"
       }
