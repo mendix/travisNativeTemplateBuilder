@@ -38,7 +38,7 @@ jobs:
         before_script:
             - mkdir res && mkdir res/raw && touch res/raw/runtime_url && echo "https://nativecomponentste-sandbox.mxapps.io/" > res/raw/runtime_url
             - zip -u app-appstore-debug.apk res/raw/runtime_url
-            - echo android | ${ANDROID_HOME}/build-tools/${ANDROID_BUILD_TOOLS}/apksigner sign --ks "$HOME"/.android/debug.keystore app-appstore-debug.apk
+            - echo android | ${ANDROID_HOME}/build-tools/${ANDROID_BUILD_TOOLS}/apksigner sign --ks debug.keystore app-appstore-debug.apk
             - npm install
         script:
             - npm run test
