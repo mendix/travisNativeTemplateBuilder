@@ -6,7 +6,6 @@ branches:
         - master
 cache:
     directories:
-        - ${HOME}/android-sdk/
         - node_modules
 jdk:
     - openjdk8
