@@ -31,14 +31,14 @@ jobs:
             - sudo adduser $USER libvirt
             - sudo adduser $USER kvm
             - echo no | avdmanager create avd --force -n Pixel_2_API_29 -k "system-images;android-${COMPILE_API};google_apis;x86_64" -c 100M # create device
-            - sudo -E sudo -u "$USER" -E bash -c "${ANDROID_HOME}/emulator/emulator -avd Pixel_2_API_29 -verbose -no-snapshot -no-window -camera-back none -camera-front none -selinux permissive -qemu -m 2048 &"
+            - sudo -E sudo -u "$USER" -E bash -c "${ANDROID_HOME}/emulator/emulator -avd Pixel_2_API_29 -no-snapshot -no-window -camera-back none -camera-front none -selinux permissive -qemu -m 2048 &"
             - echo 'Emu created'
             - ./android-wait-for-emulator.sh
             - adb shell input keyevent 82 & # unlocking the device
         before_script:
             - mkdir res && mkdir res/raw && touch res/raw/runtime_url && echo "https://nativecomponentste-sandbox.mxapps.io/" > res/raw/runtime_url
             - zip -u app-appstore-debug.apk res/raw/runtime_url
-            - ${ANDROID_HOME}/build-tools/${ANDROID_BUILD_TOOLS}/apksigner sign --ks "$HOME"/.android/debug.keystore app-appstore-debug.apk
+            - echo android | ${ANDROID_HOME}/build-tools/${ANDROID_BUILD_TOOLS}/apksigner sign --ks "$HOME"/.android/debug.keystore app-appstore-debug.apk
             - npm install
         script:
             - npm run test
