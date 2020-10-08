@@ -3,9 +3,9 @@
   "runnerConfig": "e2e/config.json",
   "configurations": {
     "android": {
-      "type": "android.emulator",
       "binaryPath": "./app-appstore-debug.apk",
       "testBinaryPath": "./app-appstore-debug-androidTest.apk",
+      "type": "android.attached",
       "device": {
         "avdName": "Pixel_2_API_29"
       }
