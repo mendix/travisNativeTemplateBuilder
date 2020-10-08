@@ -5,7 +5,7 @@
     "android": {
       "binaryPath": "./app-appstore-debug.apk",
       "testBinaryPath": "./app-appstore-debug-androidTest.apk",
-      "type": "android.attached",
+      "type": "android.emulator",
       "device": {
         "avdName": "Pixel_2_API_29"
       }
