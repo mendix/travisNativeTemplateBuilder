@@ -1,7 +1,7 @@
 {
   "name": "travisandroid",
   "version": "1.0.0",
-  "description": "",
+  "description": "Travis tests",
   "main": "index.js",
   "scripts": {
     "test": "detox test --debug-synchronization 200 --loglevel verbose"
