@@ -1,11 +1,11 @@
-const element = require("detox").element
+const detox = require("detox")
 
 describe('Example', () => {
   beforeEach(async () => {
-    await device.reloadReactNative();
+    await detox.device.reloadReactNative();
   });
 
   it("shall pass ", () => {
-    expect(element(by.id(`badge1$caption`))).toBeVisible();
+    expect(detox.element(detox.by.id(`badge1$caption`))).toBeVisible();
   });
 });
