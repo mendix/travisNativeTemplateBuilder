@@ -6,6 +6,6 @@ describe('Example', () => {
   });
 
   it("shall pass ", () => {
-    expect(detox.element(detox.by.id(`badge1$caption`))).toBeVisible();
+    expect(detox.element(detox.by.id(`badge1$caption`))).toBeNotVisible();
   });
 });
