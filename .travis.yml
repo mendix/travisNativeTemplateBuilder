@@ -30,7 +30,7 @@ jobs:
                 - set -e
                 - curl https://github.com/mendix/native-template/archive/${LATEST_NATIVE_TEMPLATE_VERSION}.zip -L -o ./native-template.zip
                 - unzip native-template.zip
-                - cd native-template-${LATEST_NATIVE_TEMPLATE_VERSION}
+                - cd native-template-${LATEST_NATIVE_TEMPLATE_VERSION:1}
                 - npm install
                 - cd android
                 - ./gradlew assembleAppstoreDebug assembleAppstoreDebugAndroidTest -DtestBuildType=debug
@@ -56,7 +56,7 @@ jobs:
                 - set -e
                 - curl https://github.com/mendix/native-template/archive/${LATEST_NATIVE_TEMPLATE_VERSION}.zip -L -o ./native-template.zip
                 - unzip native-template.zip
-                - cd native-template-${LATEST_NATIVE_TEMPLATE_VERSION}
+                - cd native-template-${LATEST_NATIVE_TEMPLATE_VERSION:1}
                 - npm install
                 - cd ios
                 - pod install
