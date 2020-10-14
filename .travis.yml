@@ -27,9 +27,9 @@ jobs:
             jdk:
                 - openjdk8
             script:
-                - set -e
                 - curl https://github.com/mendix/native-template/archive/${LATEST_NATIVE_TEMPLATE_VERSION}.zip -L -o ./native-template.zip
                 - unzip native-template.zip
+                - echo native-template-${LATEST_NATIVE_TEMPLATE_VERSION:1}
                 - cd native-template-${LATEST_NATIVE_TEMPLATE_VERSION:1}
                 - npm install
                 - cd android
@@ -53,9 +53,9 @@ jobs:
             os: osx
             osx_image: xcode12.2
             script:
-                - set -e
                 - curl https://github.com/mendix/native-template/archive/${LATEST_NATIVE_TEMPLATE_VERSION}.zip -L -o ./native-template.zip
                 - unzip native-template.zip
+                - echo native-template-${LATEST_NATIVE_TEMPLATE_VERSION:1}
                 - cd native-template-${LATEST_NATIVE_TEMPLATE_VERSION:1}
                 - npm install
                 - cd ios
