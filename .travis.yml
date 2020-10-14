@@ -1,14 +1,10 @@
 # ignored on non-linux platforms, but bionic is required for nested virtualization
-dist: bionic
-language: java
 branches:
     only:
         - master
 cache:
     directories:
         - node_modules
-jdk:
-    - openjdk8
 env:
     global:
         - COMPILE_API=29
@@ -18,13 +14,20 @@ env:
         # PATH order is incredibly important. e.g. the 'emulator' script exists in more than one place!
         - PATH=${ANDROID_HOME}:${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${PATH}
         - LATEST_NATIVE_TEMPLATE_VERSION=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/mendix/native-template '*.*.*'  | tail -n 1 | cut -d "/" -f 3)
+        - LATEST_CURRENT_VERSION=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/mendixlabs/travisAndroid '*.*.*'  | tail -n 1 | cut -d "/" -f 3)
+stages:
+    - name: test
+      if: LATEST_NATIVE_TEMPLATE_VERSION != LATEST_CURRENT_VERSION
 jobs:
     fast_finish: true
     include:
           - name: "Prepare apk"
+            dist: bionic
+            language: java
+            jdk:
+                - openjdk8
             script:
-                - apt-get install -qq -y wget
-                - wget "https://github.com/mendix/native-template/archive/${LATEST_NATIVE_TEMPLATE_VERSION}.zip -O ./native-template.zip"
+                - curl https://github.com/mendix/native-template/archive/${LATEST_NATIVE_TEMPLATE_VERSION}.zip -L -o ./native-template.zip
                 - unzip native-template.zip -d /native-template
                 - cd native-template
                 - npm install
@@ -49,8 +52,7 @@ jobs:
             os: osx
             osx_image: xcode12.2
             script:
-                - apt-get install -qq -y wget
-                - wget "https://github.com/mendix/native-template/archive/${LATEST_NATIVE_TEMPLATE_VERSION}.zip -O ./native-template.zip"
+                - curl https://github.com/mendix/native-template/archive/${LATEST_NATIVE_TEMPLATE_VERSION}.zip -L -o ./native-template.zip
                 - unzip native-template.zip -d /native-template
                 - cd native-template
                 - npm install
