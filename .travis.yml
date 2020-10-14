@@ -20,7 +20,7 @@ env:
 jobs:
     fast_finish: true
     include:
-        - name: "Prepare apk"
+          - name: "Prepare apk"
             script:
                 - export VERSION=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/mendix/native-template '*.*.*'  | tail -n 1 | cut -d "/" -f 3)
                 - wget "https://github.com/mendix/native-template/archive/${VERSION}.zip -O ./native-template.zip"
