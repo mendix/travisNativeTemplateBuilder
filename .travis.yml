@@ -14,7 +14,7 @@ env:
         - PATH=${ANDROID_HOME}:${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${PATH}
         - LATEST_NATIVE_TEMPLATE_VERSION=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/mendix/native-template '*.*.*'  | tail -n 1 | cut -d "/" -f 3)
         # in our version we release as version-android or version-ios thus we need to remove it
-        - LATEST_CURRENT_VERSION=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/mendixlabs/travisNativeTemplateBuilder '*.*.*'  | tail -n 1 | cut -d "/" -f 3)
+        - LATEST_CURRENT_VERSION=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/mendix/travisNativeTemplateBuilder '*.*.*'  | tail -n 1 | cut -d "/" -f 3)
 jobs:
     fast_finish: true
     include:
