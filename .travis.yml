@@ -1,36 +1,77 @@
-dist: xenial
-language: node_js
-node_js: 14
 branches:
     only:
         - master
-android:
-    components:
-        - tools
-        # TODO: check if we need this
-        - platform-tools
-        - build-tools-28.0.3
-        - android-28
-stages:
-    - name: test
-      if: tag IS blank
+cache:
+    directories:
+        - node_modules
+env:
+    global:
+        - COMPILE_API=29
+        - ANDROID_BUILD_TOOLS=29.0.2
+        - ANDROID_HOME=${HOME}/android-sdk
+        - ANDROID_TOOLS_URL="https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip"
+        # PATH order is incredibly important. e.g. the 'emulator' script exists in more than one place!
+        - PATH=${ANDROID_HOME}:${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${PATH}
+        - LATEST_NATIVE_TEMPLATE_VERSION=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/mendix/native-template '*.*.*'  | tail -n 1 | cut -d "/" -f 3)
+        # in our version we release as version-android or version-ios thus we need to remove it
+        - LATEST_CURRENT_VERSION=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/mendixlabs/travisNativeTemplateBuilder '*.*.*'  | tail -n 1 | cut -d "/" -f 3)
 jobs:
     fast_finish: true
     include:
-        - name: "Run android"
-          # manually install the android-28
-          #      before_install:
-          #        - touch $HOME/.android/repositories.cfg
-          #        - yes | sdkmanager "platforms;android-28"
-          #        - yes | sdkmanager "build-tools;28.0.3"
-          #      before_cache:
-          #        - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-          #        - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+        - name: "Prepare apk"
+          dist: bionic
+          language: java
+          jdk:
+              - openjdk8
           before_script:
-              #        - echo no | android create avd --force -n TEST_DEVICE -t android-28 --abi armeabi-v7a -c 100M
-              - avdmanager -s create avd -n TEST_DEVICE -k 'system-images;android-28;google_apis;x86' -c 100M
-              - emulator -avd test -no-audio -no-window &
-              - android-wait-for-emulator
-              - adb shell input keyevent 82 &
+              - if [ "$LATEST_NATIVE_TEMPLATE_VERSION" = "$LATEST_CURRENT_VERSION" ]; then travis_terminate 0; else echo "We have new version"; fi
           script:
-              - adb -s TEST_DEVICE install apkname.apk
+              - ./install-android-tools.sh
+              - curl "https://github.com/mendix/native-template/archive/${LATEST_NATIVE_TEMPLATE_VERSION}.zip" -L -o ./native-template.zip
+              - unzip native-template.zip
+              - cd native-template-${LATEST_NATIVE_TEMPLATE_VERSION:1}
+              - npm install
+              - cd android
+              - ./gradlew assembleAppstoreDebug assembleAppstoreDebugAndroidTest -DtestBuildType=debug
+              - mkdir -p $HOME/app/android
+              - mv app/build/outputs/apk/appstore/debug/app-appstore-debug.apk $HOME/app/android/
+              - mv app/build/outputs/apk/androidTest/appstore/debug/app-appstore-debug-androidTest.apk $HOME/app/android/
+          before_deploy:
+              # Set up git user name and tag this commit
+              - git config --local user.name $GITHUB_USER
+              - git config --local user.email $GITHUB_EMAIL
+              - git tag $LATEST_NATIVE_TEMPLATE_VERSION
+          deploy:
+              provider: releases
+              api_key: $API_KEY
+              file_glob: true
+              file: ${HOME}/app/android/*
+              skip_cleanup: true
+        - name: "Prepare ipa"
+          os: osx
+          osx_image: xcode11.6
+          before_script:
+              - set -e
+              - if [ "$LATEST_NATIVE_TEMPLATE_VERSION" = "$LATEST_CURRENT_VERSION" ]; then exit 0; else echo "We have new version"; fi
+          script:
+              - set +e
+              - curl https://github.com/mendix/native-template/archive/${LATEST_NATIVE_TEMPLATE_VERSION}.zip -L -o ./native-template.zip
+              - unzip native-template.zip
+              - cd native-template-${LATEST_NATIVE_TEMPLATE_VERSION:1}
+              - npm install
+              - cd ios
+              - pod install
+              - xcodebuild -quiet -workspace ./NativeTemplate.xcworkspace -scheme nativeTemplate -configuration Debug -sdk iphonesimulator -derivedDataPath ./build
+              - mkdir -p $HOME/app/ios
+              - zip -r $HOME/app/ios/NativeTemplate.zip $(pwd)/build/Build/Products/Debug-iphonesimulator/NativeTemplate.app
+          before_deploy:
+              # Set up git user name and tag this commit
+              - git config --local user.name $GITHUB_USER
+              - git config --local user.email $GITHUB_EMAIL
+              - git tag $LATEST_NATIVE_TEMPLATE_VERSION
+          deploy:
+              provider: releases
+              api_key: $API_KEY
+              file_glob: true
+              file: ${HOME}/app/ios/*
+              skip_cleanup: true

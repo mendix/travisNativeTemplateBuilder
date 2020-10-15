@@ -1,0 +1,16 @@
+{
+  "name": "travis-native-template-builder",
+  "version": "1.0.0",
+  "description": "Automated native template builder",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mendixlabs/travisNativeTemplateBuilder.git"
+  },
+  "author": "UI-Content",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mendixlabs/travisNativeTemplateBuilder/issues"
+  },
+  "homepage": "https://github.com/mendixlabs/travisNativeTemplateBuilder#readme"
+}
