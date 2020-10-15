@@ -26,7 +26,7 @@ jobs:
             osx_image: xcode11.6
             language: java
             jdk:
-                - openjdk8
+                - openjdk9
             script:
                 - ./install-android-tools.sh
                 - curl "https://github.com/mendix/native-template/archive/${LATEST_NATIVE_TEMPLATE_VERSION}.zip" -L -o ./native-template.zip
