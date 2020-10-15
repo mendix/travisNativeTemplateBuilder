@@ -15,7 +15,7 @@ env:
         - PATH=${ANDROID_HOME}:${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${PATH}
         - LATEST_NATIVE_TEMPLATE_VERSION=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/mendix/native-template '*.*.*'  | tail -n 1 | cut -d "/" -f 3)
         # in our version we release as version-android or version-ios thus we need to remove it
-        - LATEST_CURRENT_VERSION=${$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/mendixlabs/travisAndroid '*.*.*'  | tail -n 1 | cut -d "/" -f 3)%-*}
+        - LATEST_CURRENT_VERSION=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/mendixlabs/travisAndroid '*.*.*'  | tail -n 1 | cut -d "/" -f 3)
 stages:
     - name: test
       if: LATEST_NATIVE_TEMPLATE_VERSION != LATEST_CURRENT_VERSION
@@ -42,7 +42,7 @@ jobs:
               # Set up git user name and tag this commit
               - git config --local user.name $GITHUB_USER
               - git config --local user.email $GITHUB_EMAIL
-              - git tag $LATEST_NATIVE_TEMPLATE_VERSION-android
+              - git tag $LATEST_NATIVE_TEMPLATE_VERSION
           deploy:
               provider: releases
               api_key: $API_KEY
@@ -66,7 +66,7 @@ jobs:
               # Set up git user name and tag this commit
               - git config --local user.name $GITHUB_USER
               - git config --local user.email $GITHUB_EMAIL
-              - git tag $LATEST_NATIVE_TEMPLATE_VERSION-ios
+              - git tag $LATEST_NATIVE_TEMPLATE_VERSION
           deploy:
               provider: releases
               api_key: $API_KEY
