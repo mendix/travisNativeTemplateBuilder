@@ -16,17 +16,17 @@ env:
         - LATEST_NATIVE_TEMPLATE_VERSION=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/mendix/native-template '*.*.*'  | tail -n 1 | cut -d "/" -f 3)
         # in our version we release as version-android or version-ios thus we need to remove it
         - LATEST_CURRENT_VERSION=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/mendixlabs/travisAndroid '*.*.*'  | tail -n 1 | cut -d "/" -f 3)
-stages:
-    - name: test
-      if: LATEST_NATIVE_TEMPLATE_VERSION != LATEST_CURRENT_VERSION
 jobs:
     fast_finish: true
     include:
-        - name: "Prepare apk"
+        - if: LATEST_NATIVE_TEMPLATE_VERSION != LATEST_CURRENT_VERSION
+          name: "Prepare apk"
           dist: bionic
           language: java
           jdk:
               - openjdk8
+          before_script:
+              - if [ "$LATEST_NATIVE_TEMPLATE_VERSION" = "$LATEST_CURRENT_VERSION" ]; then travis_terminate 0; else echo "We have new version"; fi
           script:
               - ./install-android-tools.sh
               - curl "https://github.com/mendix/native-template/archive/${LATEST_NATIVE_TEMPLATE_VERSION}.zip" -L -o ./native-template.zip
@@ -49,9 +49,12 @@ jobs:
               file_glob: true
               file: ${HOME}/app/android/*
               skip_cleanup: true
-        - name: "Prepare ipa"
+        - if: LATEST_NATIVE_TEMPLATE_VERSION != LATEST_CURRENT_VERSION
+          name: "Prepare ipa"
           os: osx
           osx_image: xcode11.6
+          before_script:
+              - if [ "$LATEST_NATIVE_TEMPLATE_VERSION" = "$LATEST_CURRENT_VERSION" ]; then travis_terminate 0; else echo "We have new version"; fi
           script:
               - curl https://github.com/mendix/native-template/archive/${LATEST_NATIVE_TEMPLATE_VERSION}.zip -L -o ./native-template.zip
               - unzip native-template.zip
