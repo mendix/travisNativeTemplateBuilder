@@ -22,16 +22,15 @@ jobs:
     fast_finish: true
     include:
           - name: "Prepare apk"
-            dist: bionic
+            os: osx
+            osx_image: xcode11.6
             language: java
             jdk:
                 - openjdk8
             script:
                 - ./install-android-tools.sh
-                - echo native-template-${LATEST_NATIVE_TEMPLATE_VERSION}
                 - curl "https://github.com/mendix/native-template/archive/${LATEST_NATIVE_TEMPLATE_VERSION}.zip" -L -o ./native-template.zip
                 - unzip native-template.zip
-                - echo native-template-${LATEST_NATIVE_TEMPLATE_VERSION:1}
                 - cd native-template-${LATEST_NATIVE_TEMPLATE_VERSION:1}
                 - npm install
                 - cd android
@@ -57,7 +56,6 @@ jobs:
             script:
                 - curl https://github.com/mendix/native-template/archive/${LATEST_NATIVE_TEMPLATE_VERSION}.zip -L -o ./native-template.zip
                 - unzip native-template.zip
-                - echo native-template-${LATEST_NATIVE_TEMPLATE_VERSION:1}
                 - cd native-template-${LATEST_NATIVE_TEMPLATE_VERSION:1}
                 - npm install
                 - cd ios
@@ -77,27 +75,3 @@ jobs:
                 file_glob: true
                 file: ${HOME}/app/ios/*
                 skip_cleanup: true
-#        - name: "Run android"
-#            before_install:
-#                # Set up JDK 8 for Android SDK - Java is universally needed: codacy, unit tests, emulators
-#                - ./install-android-tools.sh
-#                - echo y | sdkmanager --no_https "emulator" >/dev/null # duh
-#                - echo y | sdkmanager --no_https "system-images;android-${COMPILE_API};google_apis;x86_64" # install our emulator
-#            install:
-#                # Set up KVM on linux for hardware acceleration. Manually here so it only happens for emulator tests, takes ~30s
-#                - sudo -E apt-get -yq --no-install-suggests --no-install-recommends install bridge-utils libpulse0 libvirt-bin qemu-kvm virtinst ubuntu-vm-builder >/dev/null
-#                - sudo adduser $USER libvirt
-#                - sudo adduser $USER kvm
-#                - echo no | avdmanager create avd --force -n Pixel_2_API_29 -k "system-images;android-${COMPILE_API};google_apis;x86_64" -c 100M # create device
-#                - sudo -E sudo -u "$USER" -E bash -c "${ANDROID_HOME}/emulator/emulator -avd Pixel_2_API_29 -no-snapshot -no-window -no-boot-anim -camera-back none -camera-front none -selinux permissive -qemu -m 2048 &"
-#                - echo 'Emu created'
-#                - ./android-wait-for-emulator.sh
-#                - adb shell input keyevent 82 & # unlocking the device
-#            before_script:
-#                - mkdir -p res/raw && touch res/raw/runtime_url && echo "https://travis2-sandbox.mxapps.io" > res/raw/runtime_url
-#                - zip -u app-appstore-debug.apk res/raw/runtime_url
-#                - echo android | ${ANDROID_HOME}/build-tools/${ANDROID_BUILD_TOOLS}/apksigner sign --ks debug.keystore app-appstore-debug.apk
-#                - echo android | ${ANDROID_HOME}/build-tools/${ANDROID_BUILD_TOOLS}/apksigner sign --ks debug.keystore app-appstore-debug-androidTest.apk
-#                - npm install
-#            script:
-#                - npm run test
