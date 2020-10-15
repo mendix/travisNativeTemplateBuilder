@@ -19,8 +19,7 @@ env:
 jobs:
     fast_finish: true
     include:
-        - if: LATEST_NATIVE_TEMPLATE_VERSION != LATEST_CURRENT_VERSION
-          name: "Prepare apk"
+        - name: "Prepare apk"
           dist: bionic
           language: java
           jdk:
@@ -49,12 +48,12 @@ jobs:
               file_glob: true
               file: ${HOME}/app/android/*
               skip_cleanup: true
-        - if: LATEST_NATIVE_TEMPLATE_VERSION != LATEST_CURRENT_VERSION
-          name: "Prepare ipa"
+        - name: "Prepare ipa"
           os: osx
           osx_image: xcode11.6
           before_script:
-              - if [ "$LATEST_NATIVE_TEMPLATE_VERSION" = "$LATEST_CURRENT_VERSION" ]; then travis_terminate 0; else echo "We have new version"; fi
+              - set -e
+              - if [ "$LATEST_NATIVE_TEMPLATE_VERSION" = "$LATEST_CURRENT_VERSION" ]; then exit 0; else echo "We have new version"; fi
           script:
               - curl https://github.com/mendix/native-template/archive/${LATEST_NATIVE_TEMPLATE_VERSION}.zip -L -o ./native-template.zip
               - unzip native-template.zip
