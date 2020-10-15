@@ -22,11 +22,10 @@ jobs:
     fast_finish: true
     include:
           - name: "Prepare apk"
-            os: osx
-            osx_image: xcode11.6
+            dist: bionic
             language: java
             jdk:
-                - openjdk9
+                - openjdk8
             script:
                 - ./install-android-tools.sh
                 - curl "https://github.com/mendix/native-template/archive/${LATEST_NATIVE_TEMPLATE_VERSION}.zip" -L -o ./native-template.zip
