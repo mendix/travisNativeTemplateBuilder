@@ -27,6 +27,7 @@ jobs:
             jdk:
                 - openjdk8
             script:
+                - ./install-android-tools.sh
                 - echo native-template-${LATEST_NATIVE_TEMPLATE_VERSION}
                 - curl "https://github.com/mendix/native-template/archive/${LATEST_NATIVE_TEMPLATE_VERSION}.zip" -L -o ./native-template.zip
                 - unzip native-template.zip
@@ -34,7 +35,6 @@ jobs:
                 - cd native-template-${LATEST_NATIVE_TEMPLATE_VERSION:1}
                 - npm install
                 - cd android
-                - ./install-android-tools.sh
                 - ./gradlew assembleAppstoreDebug assembleAppstoreDebugAndroidTest -DtestBuildType=debug
                 - mkdir -p $HOME/app/android
                 - mv app/build/outputs/apk/appstore/debug/app-appstore-debug.apk $HOME/app/android/
@@ -64,7 +64,7 @@ jobs:
                 - pod install
                 - xcodebuild -quiet -workspace ./NativeTemplate.xcworkspace -scheme nativeTemplate -configuration Debug -sdk iphonesimulator -derivedDataPath ./build
                 - mkdir -p $HOME/app/ios
-                - zip -r $HOME/app/ios/NativeTemplate.zip $(pwd)/build/Build/Products/Debug-iphonesimulator/NativeTemplate.apps
+                - zip -r $HOME/app/ios/NativeTemplate.zip $(pwd)/build/Build/Products/Debug-iphonesimulator/NativeTemplate.app
             before_deploy:
                 # Set up git user name and tag this commit
                 - git config --local user.name $GITHUB_USER
