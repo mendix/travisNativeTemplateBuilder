@@ -8,75 +8,86 @@ on:
     schedule:
         # * is a special character in YAML so you have to quote this string
         - cron:  '0 23 * * *'
-
+env:
+    COMPILE_API: 29
+    ANDROID_BUILD_TOOLS: 29.0.2
+    PATH: ${ANDROID_HOME}:${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${PATH}
+    LATEST_NATIVE_TEMPLATE_VERSION: $(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/mendix/native-template '*.*.*'  | tail -n 1 | cut -d "/" -f 3)
+    LATEST_CURRENT_VERSION: $(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/mendix/travisNativeTemplateBuilder '*.*.*'  | tail -n 1 | cut -d "/" -f 3)
 jobs:
     create_apk:
+        if: ${{ env.LATEST_CURRENT_VERSION }} != ${{ env.LATEST_NATIVE_TEMPLATE_VERSION }} 
         name: Create apk
         runs-on: ubuntu-latest
         steps:
-            - name: "Checking-out code"
-              uses: actions/checkout@v2
-              with:
-                  submodules: false
-            - name: "Defining environment variables"
+            - name: "test"
               run: |
-                echo "COMPILE_API=29" >> $GITHUB_ENV
-                echo "ANDROID_BUILD_TOOLS=29.0.2" >> $GITHUB_ENV
-                echo "PATH=${ANDROID_HOME}:${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${PATH}" >> $GITHUB_ENV
-                echo "LATEST_NATIVE_TEMPLATE_VERSION=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/mendix/native-template '*.*.*'  | tail -n 1 | cut -d "/" -f 3)" >> $GITHUB_ENV
-                echo "LATEST_CURRENT_VERSION=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/mendix/travisNativeTemplateBuilder '*.*.*'  | tail -n 1 | cut -d "/" -f 3)" >> $GITHUB_ENV
-            - name: "Defining cache"
-              uses: actions/cache@v2
-              env:
-                  cache-name: cache-node-modules
-              with:
-                  path: ~/.npm
-                  key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-                  restore-keys: |
-                      ${{ runner.os }}-build-${{ env.cache-name }}-
-                      ${{ runner.os }}-build-
-                      ${{ runner.os }}-
-            - name: "Assembling apk"
-              id: assemble_apk
-              run: |
-                curl "https://github.com/mendix/native-template/archive/${LATEST_NATIVE_TEMPLATE_VERSION}.zip" -L -o ./native-template.zip
-                unzip native-template.zip
-                cd native-template-${LATEST_NATIVE_TEMPLATE_VERSION:1}
-                npm install
-                cd android
-                ./gradlew assembleAppstoreDebug assembleAppstoreDebugAndroidTest -DtestBuildType=debug
-                mkdir -p ${{ github.workspace }}/app/android
-                mv app/build/outputs/apk/appstore/debug/app-appstore-debug.apk ${{ github.workspace }}/app/android/
-                mv app/build/outputs/apk/androidTest/appstore/debug/app-appstore-debug-androidTest.apk ${{ github.workspace }}/app/android/
-                ls ${{ github.workspace }}/app/android/
-                echo ::set-output name=version::$LATEST_NATIVE_TEMPLATE_VERSION
-            - name: Creating Release
-              id: create_release
-              uses: actions/create-release@v1
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-              with:
-                tag_name: ${{ steps.assemble_apk.outputs.version }}
-                release_name: Release ${{ steps.assemble_apk.outputs.version }}
-                body: |
-                  Automated apk release generated via https://github.com/mendix/native-template ${{ steps.assemble_apk.outputs.version }}
-                draft: false
-                prerelease: false
-            - name: Upload Release Asset
-              uses: actions/upload-release-asset@v1
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-                asset_path: ${{ github.workspace }}/app/android/app-appstore-debug.apk
-                asset_name: app-appstore-debug.apk
-                asset_content_type: application/zip
-            - name: Upload Release Asset
-              uses: actions/upload-release-asset@v1
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-                asset_path: ${{ github.workspace }}/app/android/app-appstore-debug-androidTest.apk
-                asset_name: app-appstore-debug-androidTest.apk
-                asset_content_type: application/zip
+                echo "not equal"
+            # - name: "Checking-out code"
+            #   uses: actions/checkout@v2
+            #   with:
+            #       submodules: false
+            # - name: "Defining cache"
+            #   uses: actions/cache@v2
+            #   env:
+            #       cache-name: cache-node-modules
+            #   with:
+            #       path: ~/.npm
+            #       key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+            #       restore-keys: |
+            #           ${{ runner.os }}-build-${{ env.cache-name }}-
+            #           ${{ runner.os }}-build-
+            #           ${{ runner.os }}-
+            # - name: "Assembling apk"
+            #   id: assemble_apk
+            #   run: |
+            #     curl "https://github.com/mendix/native-template/archive/${LATEST_NATIVE_TEMPLATE_VERSION}.zip" -L -o ./native-template.zip
+            #     unzip native-template.zip
+            #     cd native-template-${LATEST_NATIVE_TEMPLATE_VERSION:1}
+            #     npm install
+            #     cd android
+            #     ./gradlew assembleAppstoreDebug assembleAppstoreDebugAndroidTest -DtestBuildType=debug
+            #     mkdir -p ${{ github.workspace }}/app/android
+            #     mv app/build/outputs/apk/appstore/debug/app-appstore-debug.apk ${{ github.workspace }}/app/android/
+            #     mv app/build/outputs/apk/androidTest/appstore/debug/app-appstore-debug-androidTest.apk ${{ github.workspace }}/app/android/
+            #     ls ${{ github.workspace }}/app/android/
+            #     echo ::set-output name=version::$LATEST_NATIVE_TEMPLATE_VERSION
+            # - name: Creating Release
+            #   id: create_release
+            #   uses: actions/create-release@v1
+            #   env:
+            #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+            #   with:
+            #     tag_name: ${{ steps.assemble_apk.outputs.version }}
+            #     release_name: Release ${{ steps.assemble_apk.outputs.version }}
+            #     body: |
+            #       Automated apk release generated via https://github.com/mendix/native-template ${{ steps.assemble_apk.outputs.version }}
+            #     draft: false
+            #     prerelease: false
+            # - name: Upload Release Asset
+            #   uses: actions/upload-release-asset@v1
+            #   env:
+            #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            #   with:
+            #     upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+            #     asset_path: ${{ github.workspace }}/app/android/app-appstore-debug.apk
+            #     asset_name: app-appstore-debug.apk
+            #     asset_content_type: application/zip
+            # - name: Upload Release Asset
+            #   uses: actions/upload-release-asset@v1
+            #   env:
+            #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            #   with:
+            #     upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+            #     asset_path: ${{ github.workspace }}/app/android/app-appstore-debug-androidTest.apk
+            #     asset_name: app-appstore-debug-androidTest.apk
+            #     asset_content_type: application/zip
+            # - shell: bash
+            #   run: |
+            #     ${{ steps.create_release.outputs.upload_url }} > release_url.txt
+            # - name: Upload math result for job 1
+            #   uses: actions/upload-artifact@v2
+            #   with:
+            #     name: url
+            #     path: release_url.txt
+                
