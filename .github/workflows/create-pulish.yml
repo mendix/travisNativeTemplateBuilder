@@ -16,11 +16,11 @@ env:
     LATEST_CURRENT_VERSION: $(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/mendix/travisNativeTemplateBuilder '*.*.*'  | tail -n 1 | cut -d "/" -f 3)
 jobs:
     create_apk:
-        if: ${{ env.LATEST_CURRENT_VERSION }} != ${{ env.LATEST_NATIVE_TEMPLATE_VERSION }} 
         name: Create apk
         runs-on: ubuntu-latest
         steps:
             - name: "test"
+              if: ${{ env.LATEST_CURRENT_VERSION }} != ${{ env.LATEST_NATIVE_TEMPLATE_VERSION }} 
               run: |
                 echo "not equal"
             # - name: "Checking-out code"
