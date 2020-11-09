@@ -47,8 +47,7 @@ jobs:
                 mkdir -p ~/app/android
                 mv app/build/outputs/apk/appstore/debug/app-appstore-debug.apk ~/app/android/
                 mv app/build/outputs/apk/androidTest/appstore/debug/app-appstore-debug-androidTest.apk ~/app/android/
-            - name: Creating Release
-                id: create_release
+            - name: create_release
                 uses: actions/create-release@v1
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
