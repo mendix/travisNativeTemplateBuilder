@@ -37,6 +37,7 @@ jobs:
                       ${{ runner.os }}-build-
                       ${{ runner.os }}-
             - name: "Assembling apk"
+              id: assemble_apk
               run: |
                 curl "https://github.com/mendix/native-template/archive/${LATEST_NATIVE_TEMPLATE_VERSION}.zip" -L -o ./native-template.zip
                 unzip native-template.zip
@@ -47,16 +48,17 @@ jobs:
                 mkdir -p ~/app/android
                 mv app/build/outputs/apk/appstore/debug/app-appstore-debug.apk ~/app/android/
                 mv app/build/outputs/apk/androidTest/appstore/debug/app-appstore-debug-androidTest.apk ~/app/android/
+                echo ::set-output name=version::$LATEST_NATIVE_TEMPLATE_VERSION
             - name: Creating Release
               id: create_release
               uses: actions/create-release@v1
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
               with:
-                tag_name: ${{ github.ref }}
-                release_name: Release ${{ LATEST_NATIVE_TEMPLATE_VERSION }}
+                tag_name: ${{ steps.assemble_apk.outputs.version }}
+                release_name: Release ${{ steps.assemble_apk.outputs.version }}
                 body: |
-                  Automated apk release generated via https://github.com/mendix/native-template ${{LATEST_NATIVE_TEMPLATE_VERSION}}
+                  Automated apk release generated via https://github.com/mendix/native-template ${{ steps.assemble_apk.outputs.version }}
                 draft: false
                 prerelease: false
             - name: Upload Release Asset
