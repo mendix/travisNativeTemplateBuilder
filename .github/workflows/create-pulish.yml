@@ -7,7 +7,7 @@ on:
         branches: [ master ]
     schedule:
         # * is a special character in YAML so you have to quote this string
-        - cron:  '0 23 * * *'
+        - cron:  '*  * * *'
 
 jobs:
     create_apk:
@@ -47,32 +47,33 @@ jobs:
                 mkdir -p ~/app/android
                 mv app/build/outputs/apk/appstore/debug/app-appstore-debug.apk ~/app/android/
                 mv app/build/outputs/apk/androidTest/appstore/debug/app-appstore-debug-androidTest.apk ~/app/android/
-            - name: create_release
-                uses: actions/create-release@v1
-                env:
-                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-                with:
-                    tag_name: ${{ github.ref }}
-                    release_name: Release ${{ LATEST_NATIVE_TEMPLATE_VERSION }}
-                    body: |
-                        Automated apk release generated via https://github.com/mendix/native-template ${{LATEST_NATIVE_TEMPLATE_VERSION}}
-                    draft: false
-                    prerelease: false
+            - name: Creating Release
+              id: create_release
+              uses: actions/create-release@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+              with:
+                tag_name: ${{ github.ref }}
+                release_name: Release ${{ LATEST_NATIVE_TEMPLATE_VERSION }}
+                body: |
+                  Automated apk release generated via https://github.com/mendix/native-template ${{LATEST_NATIVE_TEMPLATE_VERSION}}
+                draft: false
+                prerelease: false
             - name: Upload Release Asset
-                uses: actions/upload-release-asset@v1
-                env:
-                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                with:
-                    upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-                    asset_path: ~/app/android/app-appstore-debug.apk
-                    asset_name: app-appstore-debug.apk
-                    asset_content_type: application/zip
+              uses: actions/upload-release-asset@v1
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+                asset_path: ~/app/android/app-appstore-debug.apk
+                asset_name: app-appstore-debug.apk
+                asset_content_type: application/zip
             - name: Upload Release Asset
-                uses: actions/upload-release-asset@v1
-                env:
-                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                with:
-                    upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-                    asset_path: ~/app/android/app-appstore-debug-androidTest.apk
-                    asset_name: app-appstore-debug-androidTest.apk
-                    asset_content_type: application/zip
+              uses: actions/upload-release-asset@v1
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+                asset_path: ~/app/android/app-appstore-debug-androidTest.apk
+                asset_name: app-appstore-debug-androidTest.apk
+                asset_content_type: application/zip
